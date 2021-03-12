@@ -1,16 +1,19 @@
 const mysql = require("mysql");
-const { rootCertificates } = require("node:tls");
+// const { rootCertificates } = require("node:tls");   //////why this
 const util = require("util");
 
 const connection = mysql.createConnection({
     host: 'localhost',
     port: 3000,
-    user: rootCertificates,
+    user: root,
     password: 'password',
     database: 'employeeDB'
 });
 
-connection.connect();
+connection.connect((err)=> {
+    if (err) throw err;
+    console.log(`connected as id ${connection.threadId}`);
+});
 
 connection.query = util.promisify(connection.query);
 
