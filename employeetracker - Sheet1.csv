@@ -1,3 +1,4 @@
+id,first_name,last_name,role,department,salary,manager
 1,Rick ,Prue,Director,Premedia,100000,Bob Kanell
 2,Clara,Renauro,Assistant Manager,Premedia,90000,Rick Prue
 3,Drew ,Yearian,Senior Manager,Production,85000,Bob Kanell
