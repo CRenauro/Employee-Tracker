@@ -1,5 +1,4 @@
 const mysql = require("mysql");
-// const { rootCertificates } = require("node:tls");   //////why do we need this?
 const util = require("util");
 
 const connection = mysql.createConnection({
