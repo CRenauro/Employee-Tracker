@@ -1,79 +1,63 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-require("console.table");
+require("console");
 
 const connection = mysql.createConnection({
     host: "localhost",
     port: 3000,
     user: "root",
     password: "password",
-    database: "employee",
+    database: "employeeDB"
 });
 
 
 
-const promptMessages = {
-
-    viewAllEmployees: "View All Employees",
-    viewByDepartment: "View All Employeees By Department",
-    viewByManager: "View All Employees By Manager",
-    addEmployee: "Add An Employee",
-    removeEmployee: "Remove An Employee",
-    updateRole: "Update Employee Role",
-    updateEmployeeManager: "Update Employee Manager",
-    viewAllRoles: "View All Roles",
-    exit: "Exit"
-
-};
-
-
-function prompt() {
+function start() {
     inquirer.prompt({
         name: 'action',
         type: 'list',
         message: 'What would you like to do?',
         choices: [
-            promptMessages.viewAllEmployees,
-            promptMessages.viewByDepartment,
-            promptMessages.viewByManager,
-            promptMessages.addEmployee,
-            promptMessages.removeEmployee,
-            promptMessages.updateRole,
-            promptMessages.updateEmployeeManager,
-            promptMessages.viewAllRoles,
-            promptMessages.exit
+            "View All Employees",
+            "View All Employeees By Department",
+            "View All Employees By Manager",
+            "Add An Employee",
+            "Remove An Employee",
+            "Update Employee Role",
+            "View All Roles"
         ]
     })
     .then(response => {
         console.log('answer', answer);
         switch (answer.action) {
-            case promptMessages.viewAllEmployees:
+            case "View All Employees":
                 viewAllEmployees();
                 break;
 
-            case promptMessages.viewByDepartment:
+            case "View All Employeees By Department":
                 viewByDepartment();
                 break;
 
-            case promptMessages.viewByManager:
+            case "View All Employees By Manager":
                 viewByManager();
                 break;
 
-            case promptMessages.addEmployee:
+            case "Add An Employee":
                 addEmployee();
                 break;
 
-            case promptMessages.removeEmployee:
+            case "Remove An Employee":
                 remove('delete');
                 break;
 
-            case promptMessages.updateRole:
+            case "Update Employee Role":
                 remove('role');
                 break;
 
-            case promptMessages.viewAllRoles:
+            case "View All Roles":
                 viewAllRoles();
                 break;
+                
             case promptMessages.exit:
                 connection.end();
                 break;
@@ -81,3 +65,4 @@ function prompt() {
         }
     });
 }
+
