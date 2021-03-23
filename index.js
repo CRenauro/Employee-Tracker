@@ -3,62 +3,109 @@ const inquirer = require('inquirer');
 const connection = require('./db/connection')
 require('console');
 
-const connection = mysql.createConnection({
-    host: "localhost",
-    port: 3000,
-    user: "root",
-    password: "password",
-    database: "employeeDB"
-});
+// const connection = mysql.createConnection({
+//     host: "localhost",
+//     port: 3000,
+//     user: "root",
+//     password: "password",
+//     database: "employee",
+// });
+
+const viewAllEmployees = [
+    "Rick Prue",
+    "Clara Renauro",
+    "Drew Yearian",
+    "Kevin Grimstead",
+    "Jamie Melo",
+    "Brad Scharrf",
+    "Linda Luke",
+    "Al Spinelli",
+    "Carrie Mallie",
+    "Angel Mass",
+    "exit"
+];
+
+const viewOptions = [
+    "View Departments",
+    "View Roles",
+    "View Employees",
+    "Update Employee",
+    "Add Department",
+    "Add Role",
+    "Add An Employee",
+    "Delete Department",
+    "Delete Role",
+    "Remove An Employee",
+    "View total budget",
+    "exit"
+];
+
+const updateOptions = [
+    "First Name",
+    "Last Name",
+    "Role",
+    "exit"
+]
+
+
+runSearch();
 
 
 
-function start() {
+function runSearch() {
     inquirer.prompt({
         name: 'action',
         type: 'list',
         message: 'What would you like to do?',
-        choices: [
-            "View All Employees",
-            "View All Employeees By Department",
-            "View All Employees By Manager",
-            "Add An Employee",
-            "Remove An Employee",
-            "Update Employee Role",
-            "View All Roles"
-        ]
+        choices: viewOptions
     })
     .then(response => {
         console.log('answer', answer);
         switch (answer.action) {
-            case "View All Employees":
-                viewAllEmployees();
+            case viewOptions[0]:
+                departmentView();
                 break;
 
-            case "View All Employeees By Department":
-                viewByDepartment();
+            case viewOptions[1]:
+                roleView();
                 break;
 
-            case "View All Employees By Manager":
-                viewByManager();
+            case viewOptions[2]:
+                employeeView();
                 break;
 
-            case "Add An Employee":
-                addEmployee();
+            case viewOptions[3]:
+                employeeView();
                 break;
 
-            case "Remove An Employee":
-                remove('delete');
+            case viewOptions[4]:
+                departmentView();
                 break;
 
-            case "Update Employee Role":
-                remove('role');
+            case viewOptions[5]:
+                roleView();
                 break;
 
-            case "View All Roles":
-                viewAllRoles();
+            case viewOptions[6]:
+                employeeView();
                 break;
                 
+            case viewOptions[7]:
+                departmentView();
+                break; 
+                
+            case viewOptions[8]:
+                roleView();
+                break;
+
+            case viewOptions[9]:
+                employeeView();
+                break;
+
+            case viewOptions[10]:
+                departmentView();
+                break;
+     
             case promptMessages.exit:
                 connection.end();
                 break;
@@ -96,3 +143,18 @@ function roleView() {
         runSearch();
     })
 }
+
+
+
+const updateEmployee = () => {
+    function runUpdateSearch() {
+        inquirer.prompt({
+            name: "action",
+            type: "list",
+            message: "Which employee do you want to update?",
+            choices: employeeOptions
+        })
+    }
+    runUpdateSearch();
+}
+

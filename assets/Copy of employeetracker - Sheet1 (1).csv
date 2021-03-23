@@ -1,0 +1,11 @@
+id,first_name,last_name,role_id,manager_id,department_id,salary
+1,Rick ,Prue,4,2,1,100000
+2,Clara,Renauro,1,1,1,90000
+3,Drew ,Yearian,2,2,2,85000
+4,Kevin,Grimstead,3,5,3,75000
+5,Jamie ,Melo,3,1,3,65000
+6,Brad ,Scharrf,4,3,4,95000
+7,Linda,Luke,5,3,4,95000
+8,Al,Spinelli,5,2,2,85000
+9,Carrie,Mallie,4,5,2,95000
+10,Angel,Mass,5,1,1,90000
