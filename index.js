@@ -3,15 +3,8 @@ const inquirer = require('inquirer');
 const connection = require('./db/connection')
 require('console');
 
-// const connection = mysql.createConnection({
-//     host: "localhost",
-//     port: 3000,
-//     user: "root",
-//     password: "password",
-//     database: "employee",
-// });
 
-const viewAllEmployees = [
+const employeeOptions = [
     "Rick Prue",
     "Clara Renauro",
     "Drew Yearian",
@@ -45,7 +38,7 @@ const updateOptions = [
     "Last Name",
     "Role",
     "exit"
-]
+];
 
 
 runSearch();
@@ -59,8 +52,7 @@ function runSearch() {
         message: 'What would you like to do?',
         choices: viewOptions
     })
-    .then(response => {
-        console.log('answer', answer);
+    .then(function (answer) {
         switch (answer.action) {
             case viewOptions[0]:
                 departmentView();
@@ -126,8 +118,8 @@ function departmentView() {
 
 function employeeView() {
     var sqlStr = "SELECT first_name, last_name, title, salary FROM employee ";
-    sqlStr += "LEFT JOIN role";
-    sqlStr += "ON employee.role_id = role.id"
+    sqlStr += "LEFT JOIN role ";
+    sqlStr += "ON employee.role_id = role.id";
     connection.query(sqlStr, function (err, result) {
         if (err) throw err;
         console.table(result)
