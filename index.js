@@ -1,6 +1,8 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
-const connection = require('./db/connection')
+const connection = require('./db/connection');
+const { readdirSync } = require('fs');
+const { start } = require('repl');
 require('console');
 
 
@@ -22,14 +24,9 @@ const viewOptions = [
     "View Departments",
     "View Roles",
     "View Employees",
-    "Update Employee",
-    "Add Department",
-    "Add Role",
     "Add An Employee",
-    "Delete Department",
-    "Delete Role",
-    "Remove An Employee",
-    "View total budget",
+    "Add a Department",
+    "Add a Role",
     "exit"
 ];
 
@@ -41,11 +38,10 @@ const updateOptions = [
 ];
 
 
-runSearch();
+startApp();
 
 
-
-function runSearch() {
+function startApp() {
     inquirer.prompt({
         name: 'action',
         type: 'list',
@@ -55,51 +51,33 @@ function runSearch() {
     .then(function (answer) {
         switch (answer.action) {
             case viewOptions[0]:
-                departmentView();
+                departmentView(); //view departments
                 break;
 
-            case viewOptions[1]:
+            case viewOptions[1]: //view roles
                 roleView();
                 break;
 
-            case viewOptions[2]:
+            case viewOptions[2]: //view employees
                 employeeView();
                 break;
 
-            case viewOptions[3]:
-                employeeView();
+            case viewOptions[3]: //add an employee
+                addEmployee();
                 break;
 
-            case viewOptions[4]:
-                departmentView();
+            case viewOptions[4]: // add a department
+                addDepartment();
                 break;
 
-            case viewOptions[5]:
-                roleView();
-                break;
-
-            case viewOptions[6]:
-                employeeView();
-                break;
-                
-            case viewOptions[7]:
-                departmentView();
-                break; 
-                
-            case viewOptions[8]:
-                roleView();
-                break;
-
-            case viewOptions[9]:
-                employeeView();
-                break;
-
-            case viewOptions[10]:
-                departmentView();
+            case viewOptions[5]: // add a role
+                addRole();
                 break;
      
-            case promptMessages.exit:
+            case "promptMessages.exit":
                 connection.end();
+                break;
+            default:
                 break;
 
         }
@@ -112,7 +90,7 @@ function departmentView() {
         if (err) throw err;
 
         console.table(result)
-        runSearch();
+        startApp();
     })
 }
 
@@ -123,7 +101,7 @@ function employeeView() {
     connection.query(sqlStr, function (err, result) {
         if (err) throw err;
         console.table(result)
-        runSearch();
+        startApp();
     })
 }
 
@@ -132,21 +110,135 @@ function roleView() {
     connection.query(sqlStr, function (err, result) {
         if (err) throw err;
         console.table(result)
-        runSearch();
+        startApp();
     })
 }
 
+function addEmployee() {
+    connection.query("SELECT * FROM role", function (err, result) {
+        if (err) throw err;
 
-
-const updateEmployee = () => {
-    function runUpdateSearch() {
-        inquirer.prompt({
-            name: "action",
-            type: "list",
-            message: "Which employee do you want to update?",
-            choices: employeeOptions
+        inquirer.prompt([
+            {
+                name: "first_name",
+                type: "input",
+                message: "What is the employee's first name?"
+            },
+            {
+                name: "last_name",
+                type: "input",
+                message: "What is the employee's last name?"
+            },
+            {
+                name: "role",
+                type: "list",
+                choices: function() {
+                var roleArray = [];
+                for (let i = 0; i < result.length; i++) {
+                    roleArray.push(result[i].title);
+                }
+                    return roleArray;
+                },
+                message: "What is the employee's role?"
+            }
+            ]).then(function (answer) {
+                let roleID;
+                for (let j = 0; j < result.length; j++) {
+                if (result[j].title == answer.role) {
+                    roleID = result[j].id;
+                    console.log(roleID)
+                }
+                }
+                connection.query(
+                "INSERT INTO employee SET ?",
+                {
+                    first_name: answer.first_name,
+                    last_name: answer.last_name,
+                    role_id: roleID,
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("Employee has been added");
+                    startApp();
+            }
+            )
         })
-    }
-    runUpdateSearch();
+    })
 }
 
+function addDepartment() {
+    inquirer.prompt([
+        {
+            name: "new_dept",
+            type: "input",
+            message: "What department would you like to add?"
+        }
+    ]).then(function (answer) {
+        connection.query(
+            "INSERT INTO department SET ?",
+            {
+                name: answer.new_dept
+            }
+        );
+            var query = "SELECT * FROM department";
+            connection.query(query, function(err, result) {
+                if (err)throw err;
+                console.table('All Departments:', result);
+                startApp();
+            })
+    })
+}
+
+function addRole() {
+    connection.query("SELECT * FROM department", function(err, result) {
+        if (err) throw err;
+        inquirer.prompt ([
+            {
+                name: "new_role",
+                type: "input",
+                message: "What is the TITLE of the new role?"
+            },
+            {
+                name: "salary",
+                type: "input",
+                message: "What is the salary of this position?"
+            },
+            {
+                name:"deptChoice",
+                type: "list",
+                choices: function() {
+                    var deptArray = [];
+                    for (let i = 0; i < result.length; i++) {
+                        deptArray.push(result[i].name);
+                    }
+                    return deptArray;
+                },
+            }
+        ]).then(function (answer) {
+            let deptID;
+            for (let i = 0; i < result.length; i++) {
+                if (result[i].name == answer.deptChoice) {
+                    deptID = result[i].id;
+                }
+            }
+            connection.query(
+                "INSERT INTO role SET ?",
+                {
+                    title: answer.new_role,
+                    salary: answer.salary,
+                    department_id: deptID
+                },
+                function (err, result) {
+                    if(err)throw err;
+                        console.log("Your new role is added.");
+                        startApp();
+                }
+                
+            )
+        })
+    })
+}
+
+function endApp() {
+    connection.end();
+}
